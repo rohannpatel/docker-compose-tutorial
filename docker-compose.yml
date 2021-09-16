@@ -1,0 +1,30 @@
+version: '3.9'
+services:
+
+  # Responsible for starting serverless offline
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+    ports:
+
+      # Port-available-on-localhost : port-service-running-on-docker-container
+      - 5000:5000
+    volumes:
+      - ./backend:/home
+      - /home/node_modules
+
+  # Service name 
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/home
+
+      # Don't confuse local node_modules with docker continer node_modules. Acts as ignoring node_modules from local. Ensuring home/node_modules is independent and not linked to local Frontend/node_modules
+      - /home/node_modules
+    ports:
+      - 3000:3000
+    depends_on: 
+      - backend
